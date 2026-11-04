@@ -1,0 +1,5 @@
+.DS_Store
+*.log
+java-service/target/
+uploads/*
+!uploads/.gitkeep
