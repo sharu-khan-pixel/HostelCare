@@ -1,0 +1,207 @@
+:root {
+  --brand: #2563eb;
+  --brand-hover: #1d4ed8;
+  --brand-dark: #1e3a8a;
+  --bg: #f8fafc;
+  --card-bg: #ffffff;
+  --text-primary: #1e293b;
+  --text-secondary: #64748b;
+  --border-color: #e2e8f0;
+}
+
+body {
+  background-color: var(--bg);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  color: var(--text-primary);
+  min-height: 100vh;
+}
+
+.navbar {
+  background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%);
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.15);
+}
+
+.card {
+  border: 1px solid var(--border-color);
+  border-radius: 14px;
+  background-color: var(--card-bg);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.stat-card {
+  background: #ffffff;
+  padding: 1.25rem;
+  border-radius: 14px;
+  border: 1px solid var(--border-color);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.stat-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+}
+
+.stat-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.25rem;
+}
+
+.stat-number {
+  font-size: 1.85rem;
+  font-weight: 800;
+  line-height: 1.2;
+}
+
+.badge-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.78rem;
+  font-weight: 600;
+  padding: 0.35rem 0.65rem;
+  border-radius: 20px;
+  letter-spacing: 0.02em;
+}
+
+.status-SUBMITTED {
+  background-color: #fef3c7;
+  color: #92400e;
+}
+
+.status-IN_PROGRESS {
+  background-color: #dbeafe;
+  color: #1e40af;
+}
+
+.status-RESOLVED {
+  background-color: #dcfce7;
+  color: #166534;
+}
+
+.status-REJECTED {
+  background-color: #fee2e2;
+  color: #991b1b;
+}
+
+.badge-priority {
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.25rem 0.5rem;
+  border-radius: 6px;
+}
+
+.priority-LOW {
+  background-color: #f1f5f9;
+  color: #475569;
+}
+
+.priority-MEDIUM {
+  background-color: #ffedd5;
+  color: #c2410c;
+}
+
+.priority-HIGH {
+  background-color: #fee2e2;
+  color: #b91c1c;
+}
+
+.backend-badge {
+  font-size: 0.75rem;
+  padding: 0.25rem 0.6rem;
+  border-radius: 20px;
+  font-weight: 600;
+}
+
+.backend-online {
+  background-color: #ecfdf5;
+  color: #065f46;
+  border: 1px solid #a7f3d0;
+}
+
+.backend-offline {
+  background-color: #fef2f2;
+  color: #991b1b;
+  border: 1px solid #fecaca;
+}
+
+/* Timeline styles for Audit Log */
+.timeline {
+  position: relative;
+  padding-left: 2rem;
+  margin-top: 1rem;
+}
+
+.timeline::before {
+  content: "";
+  position: absolute;
+  top: 5px;
+  bottom: 5px;
+  left: 9px;
+  width: 2px;
+  background-color: #e2e8f0;
+}
+
+.timeline-item {
+  position: relative;
+  margin-bottom: 1.5rem;
+}
+
+.timeline-item:last-child {
+  margin-bottom: 0;
+}
+
+.timeline-dot {
+  position: absolute;
+  left: -2rem;
+  top: 2px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 3px solid #ffffff;
+  box-shadow: 0 0 0 2px #cbd5e1;
+  background-color: #2563eb;
+}
+
+.timeline-dot.status-SUBMITTED {
+  background-color: #f59e0b;
+  box-shadow: 0 0 0 2px #fde68a;
+}
+.timeline-dot.status-IN_PROGRESS {
+  background-color: #2563eb;
+  box-shadow: 0 0 0 2px #bfdbfe;
+}
+.timeline-dot.status-RESOLVED {
+  background-color: #10b981;
+  box-shadow: 0 0 0 2px #a7f3d0;
+}
+.timeline-dot.status-REJECTED {
+  background-color: #ef4444;
+  box-shadow: 0 0 0 2px #fecaca;
+}
+
+.timeline-content {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 0.75rem 1rem;
+}
+
+.table > :not(caption) > * > * {
+  padding: 0.85rem 0.75rem;
+}
+
+.btn-primary {
+  background-color: var(--brand);
+  border-color: var(--brand);
+}
+
+.btn-primary:hover {
+  background-color: var(--brand-hover);
+  border-color: var(--brand-hover);
+}
