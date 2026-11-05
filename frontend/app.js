@@ -1,5 +1,6 @@
-const PHP = 'http://localhost:8000';
-const JAVA = 'http://localhost:8080/hostel-java/api/maintenance';
+const PHP = window.location.port === '5500'
+  ? `${window.location.protocol}//${window.location.hostname}:8000`
+  : window.location.origin;
 
 let token = localStorage.getItem('hc_token') || '';
 let user = JSON.parse(localStorage.getItem('hc_user') || 'null');
@@ -73,7 +74,8 @@ async function request(url, options = {}) {
 async function checkBackendHealth() {
   // Check PHP
   try {
-    await fetch(`${PHP}/auth.php?action=login`, { method: 'OPTIONS' });
+    const response = await fetch(`${PHP}/auth.php?action=login`, { method: 'OPTIONS' });
+    if (!response.ok) throw new Error('PHP API unavailable');
     $('phpStatusBadge').className = 'backend-badge backend-online';
     $('phpStatusBadge').innerHTML = '<i class="bi bi-circle-fill text-success" style="font-size: 0.6rem;"></i> PHP: Online';
   } catch (e) {
@@ -81,15 +83,8 @@ async function checkBackendHealth() {
     $('phpStatusBadge').innerHTML = '<i class="bi bi-circle-fill text-danger" style="font-size: 0.6rem;"></i> PHP: Offline';
   }
 
-  // Check Java
-  try {
-    await fetch(`${JAVA}/status`, { method: 'OPTIONS' });
-    $('javaStatusBadge').className = 'backend-badge backend-online';
-    $('javaStatusBadge').innerHTML = '<i class="bi bi-circle-fill text-success" style="font-size: 0.6rem;"></i> Java: Online';
-  } catch (e) {
-    $('javaStatusBadge').className = 'backend-badge backend-offline';
-    $('javaStatusBadge').innerHTML = '<i class="bi bi-circle-fill text-danger" style="font-size: 0.6rem;"></i> Java: Offline (Fallback)';
-  }
+  $('javaStatusBadge').className = 'backend-badge backend-offline';
+  $('javaStatusBadge').innerHTML = '<i class="bi bi-circle-fill text-secondary" style="font-size: 0.6rem;"></i> Java: Not deployed (PHP active)';
 }
 
 // -------------------------------------------------------------
@@ -502,17 +497,7 @@ window.openDetailsModal = async function(id) {
       $('modalAttachmentWrap').classList.add('d-none');
     }
 
-    // Load Audit Logs (Try Java Service AuditServlet first, fallback to PHP logs)
-    let logs = [];
-    try {
-      const javaRes = await request(`${JAVA}/audit?issue_id=${id}`);
-      if (javaRes && javaRes.audit_logs) {
-        logs = javaRes.audit_logs;
-      }
-    } catch (javaErr) {
-      // Fallback to logs returned by PHP
-      logs = issue.audit_logs || [];
-    }
+    const logs = issue.audit_logs || [];
 
     $('auditCountBadge').textContent = `${logs.length} entries`;
     renderAuditTimeline(logs);
@@ -585,45 +570,20 @@ $('adminUpdateForm').onsubmit = async e => {
   const status = $('adminNewStatus').value;
   const remarks = $('adminRemarks').value.trim();
 
-  let usedBackend = 'Java Servlet';
-  let success = false;
-
   try {
-    // 1. Try Java Servlet First (Full JDBC Transaction + Audit Log)
-    try {
-      await request(`${JAVA}/status`, {
-        method: 'POST',
-        body: JSON.stringify({
-          issue_id: issueId,
-          status: status,
-          remarks: remarks
-        })
-      });
-      usedBackend = 'Java Servlet (Tomcat JDBC Transaction)';
-      success = true;
-    } catch (javaError) {
-      console.warn('Java service unreachable, falling back to PHP:', javaError);
-
-      // 2. Fallback to PHP API
-      await request(`${PHP}/admin.php`, {
-        method: 'POST',
-        body: JSON.stringify({
-          issue_id: issueId,
-          status: status,
-          remarks: remarks
-        })
-      });
-      usedBackend = 'PHP API Fallback Transaction';
-      success = true;
-    }
-
-    if (success) {
-      showMessage('adminUpdateMessage', `Status updated successfully via ${usedBackend}!`, true);
-      setTimeout(() => {
-        updateStatusModal.hide();
-        loadIssues();
-      }, 700);
-    }
+    await request(`${PHP}/admin.php`, {
+      method: 'POST',
+      body: JSON.stringify({
+        issue_id: issueId,
+        status: status,
+        remarks: remarks
+      })
+    });
+    showMessage('adminUpdateMessage', 'Status updated successfully via PHP API!', true);
+    setTimeout(() => {
+      updateStatusModal.hide();
+      loadIssues();
+    }, 700);
   } catch (err) {
     showMessage('adminUpdateMessage', 'Failed to update status: ' + err.message);
   } finally {

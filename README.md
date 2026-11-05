@@ -134,3 +134,21 @@ Then click **Sync Role** in the top navigation bar!
 | Java | GET | `/hostel-java/api/maintenance/audit?issue_id=1` | Retrieve complete audit trail for an issue |
 | PHP | POST | `/admin.php` | Fallback status update transaction |
 | PHP | GET | `/admin.php?action=audit&issue_id=1` | Fallback audit trail retrieval |
+
+---
+
+## 6. Free Global Deployment (Render + Neon)
+
+The `render.yaml` Blueprint deploys the PHP API and frontend together as one public HTTPS service. PostgreSQL runs on Neon; the Java servlet is not required because the PHP API provides status updates and audit history.
+
+This is suitable for a lightweight demo, not production: Render's free web service sleeps after 15 minutes without traffic and has limited monthly usage. Neon Free is not a trial, but includes 100 compute-hours, 1 GB database storage, and 5 GB of network transfer per month. If a quota is reached, the database may be unavailable until the next month. Render's local filesystem is temporary, so uploaded attachments can disappear after a restart or idle spin-down.
+
+### Deploy
+
+1. Create a Free project in [Neon](https://neon.com/) and open its SQL Editor. Run `database/schema.sql` after omitting the initial `CREATE DATABASE` and `\c hostel_portal;` lines; Neon creates the database for you.
+2. Copy the connection details from Neon. Keep the host, database name, user, and password private.
+3. Push this project, including `Dockerfile` and `render.yaml`, to the connected GitHub repository. In Render, choose **New > Blueprint** and select that repository.
+4. When Render requests environment values, enter Neon's `DB_HOST`, `DB_NAME`, `DB_USER`, and `DB_PASS`. Set `DB_PORT` to `5432`, `DB_SSLMODE` to `require`, and `JWT_SECRET` to a new random secret. Enter secrets only in Render's environment settings, never in source control.
+5. After the deploy succeeds, open the Render service URL. It is publicly reachable over HTTPS worldwide; the free service may take about a minute to wake after idle periods.
+
+The database can remain free for two months, subject to Neon's usage limits. The app does not automatically shut down after two months; delete the Render service and Neon project when you are finished.
