@@ -7,7 +7,7 @@ RUN apt-get update \
     && sed -ri 's/<VirtualHost \*:80>/<VirtualHost *:10000>/' /etc/apache2/sites-available/000-default.conf \
     && rm -rf /var/lib/apt/lists/*
 
-COPY php-api/config/ /var/www/html/config/
+COPY php-api/config/ /var/www/config/
 COPY php-api/public/ /var/www/html/
 COPY frontend/ /var/www/html/
 
